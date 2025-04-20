@@ -1,0 +1,16 @@
+services:
+  gold-tracker:
+    image: ghcr.io/YOUR-USERNAME/gold-tracker:latest
+    container_name: gold-tracker
+    ports:
+      - "8080:8080"
+    environment:
+      - GOLD_API_KEY=${GOLD_API_KEY}
+      - SECRET_KEY=${SECRET_KEY:-random_secure_string}
+    volumes:
+      - gold_data:/app/data
+    restart: unless-stopped
+
+volumes:
+  gold_data:
+    # This creates a named volume that persists even if containers are removed

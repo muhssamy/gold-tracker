@@ -17,11 +17,16 @@ RUN poetry install --no-root --no-interaction --no-ansi
 # Copy application files
 COPY . .
 
-# Create data directory if it doesn't exist
-RUN mkdir -p data
+# Create data directory with proper permissions
+RUN mkdir -p data && chmod 777 data
 
-# Expose port 8080
+# Expose port (PORT can be overridden by environment variable)
 EXPOSE 8080
 
-# Run with Gunicorn (production server) instead of Flask's development server
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:app"]
+# Set environment variables with defaults
+ENV PORT=8080 \
+    GOLD_API_KEY="" \
+    SECRET_KEY="dev-only-key-replace-in-production"
+
+# Run the application
+CMD ["python", "app.py"]
