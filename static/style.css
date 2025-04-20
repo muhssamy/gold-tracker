@@ -1,0 +1,67 @@
+/* Add these new styles to your existing CSS file */
+
+/* Refresh Button */
+.refresh-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 12px;
+    margin-top: 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+    transition: background-color 0.3s;
+}
+
+.refresh-button:hover {
+    background-color: #45a049;
+}
+
+.refresh-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.refresh-icon {
+    margin-right: 5px;
+    font-size: 16px;
+    display: inline-block;
+}
+
+.spin {
+    animation: spinner 1s linear infinite;
+}
+
+@keyframes spinner {
+    to {transform: rotate(360deg);}
+}
+
+/* Cache Status Indicator */
+.last-updated-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #666;
+}
+
+.cached-indicator {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.cached {
+    background-color: #e0e0e0;
+    color: #666;
+}
+
+.fresh {
+    background-color: #d4edda;
+    color: #155724;
+}

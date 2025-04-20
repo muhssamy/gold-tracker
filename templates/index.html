@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KSA Gold Tracker</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <h1>KSA Gold Investment Tracker</h1>
+
+      <div class="current-price-box">
+        <h2>Current Gold Price</h2>
+        <div id="current-price-display">
+          <div class="price-value">Loading...</div>
+          <div class="price-time"></div>
+        </div>
+        <button id="refresh-prices" class="refresh-button">
+          <span class="refresh-icon">↻</span> Refresh Prices
+        </button>
+      </div>
+
+      <div class="investment-calculator">
+        <h2>Add New Gold Purchase</h2>
+        <form id="gold-purchase-form">
+          <div class="form-group">
+            <label for="purchase-date">Purchase Date:</label>
+            <input type="date" id="purchase-date" required />
+          </div>
+
+          <div class="form-group">
+            <label for="purchase-price">Purchase Price (SAR per gram):</label>
+            <input type="number" id="purchase-price" step="0.01" required />
+            <button
+              type="button"
+              id="fetch-historical-price"
+              class="secondary-button"
+            >
+              Get Historical Price
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label for="grams">Grams Purchased:</label>
+            <input type="number" id="grams" step="0.01" required />
+          </div>
+
+          <div class="form-group">
+            <label for="description">Description (optional):</label>
+            <input
+              type="text"
+              id="description"
+              placeholder="e.g., 24K bracelet"
+            />
+          </div>
+
+          <button type="submit" class="primary-button">Add Purchase</button>
+        </form>
+      </div>
+
+      <div class="purchases-section">
+        <h2>Your Gold Purchases</h2>
+        <div class="last-updated-info">
+          <span id="last-updated-text">Last updated: Never</span>
+          <span id="cache-status" class="cached-indicator">Cached</span>
+        </div>
+        <div class="table-container">
+          <table id="purchases-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Grams</th>
+                <th>Purchase Price</th>
+                <th>Purchase Value</th>
+                <th>Current Value</th>
+                <th>Profit/Loss</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="purchases-body">
+              <tr class="empty-row">
+                <td colspan="8">No purchases yet. Add a purchase above.</td>
+              </tr>
+            </tbody>
+            <tfoot id="summary-row" class="hidden">
+              <tr>
+                <td colspan="4"><strong>TOTAL</strong></td>
+                <td id="total-investment">-</td>
+                <td id="total-current-value">-</td>
+                <td id="total-profit-loss">-</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div id="error-message" class="hidden">
+        <p class="error-text"></p>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

@@ -1,0 +1,92 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor folders
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.settings/
+.classpath
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+jspm_packages/
+bower_components/
+
+# Build outputs
+dist/
+build/
+out/
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Coverage directory
+coverage/
+.nyc_output
+.coverage
+htmlcov/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.pytest_cache/
+
+# Ruby
+/.bundle/
+/vendor/bundle
+.rvmrc
+
+# Java
+.gradle/
+
+# C/C++
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Temporary files
+tmp/
+temp/
