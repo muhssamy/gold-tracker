@@ -26,7 +26,8 @@ EXPOSE 8080
 # Set environment variables with defaults
 ENV PORT=8080 \
     GOLD_API_KEY="" \
-    SECRET_KEY="dev-only-key-replace-in-production"
+    SECRET_KEY="dev-only-key-replace-in-production" \
+    WORKERS=4
 
-# Run the application
-CMD ["python", "app.py"]
+# Run with Gunicorn for production
+CMD gunicorn --bind 0.0.0.0:${PORT} --workers ${WORKERS} --access-logfile - --error-logfile - app:app

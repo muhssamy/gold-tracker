@@ -7,11 +7,18 @@ services:
       - "8080:8080"
     environment:
       - GOLD_API_KEY=${GOLD_API_KEY}
-      - SECRET_KEY=change_this_to_a_random_string
+      - SECRET_KEY=${SECRET_KEY:-change_this_to_a_random_secure_string}
+      - WORKERS=4
     volumes:
-      - ./:/app
       - gold_data:/app/data
     restart: unless-stopped
+    # Health check to ensure the application is running
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 volumes:
   gold_data:

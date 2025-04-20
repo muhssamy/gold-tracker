@@ -78,7 +78,6 @@ export GOLD_API_KEY=your_api_key_here
 poetry run python app.py
 ```
 
-
 ## 🔒 Security
 
 - API keys are stored as environment variables, never in the codebase
@@ -93,6 +92,10 @@ The Gold Price Tracker provides insights into the Saudi Arabian gold market:
 - Real-time updates from reliable gold price sources
 - Historical Saudi gold price trends
 - USD to SAR conversion for international comparison
+
+## 👨‍💻 Credits
+
+This application was created by [Muhssamy](https://github.com/muhssamy) with assistance from [Claude AI](https://claude.ai). The initial concept, requirements, and testing were provided by Muhssamy, while Claude AI assisted with code development, troubleshooting, and documentation.
 
 ## 📄 License
 

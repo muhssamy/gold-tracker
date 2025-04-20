@@ -1,4 +1,131 @@
-/* Add these new styles to your existing CSS file */
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #b8860b;
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #daa520;
+}
+
+h2 {
+    color: #8b4513;
+    margin-bottom: 15px;
+}
+
+/* Current Price Box */
+.current-price-box {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#current-price-display {
+    margin-top: 15px;
+}
+
+.price-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #b8860b;
+}
+
+.price-time {
+    font-size: 14px;
+    color: #777;
+    margin-top: 5px;
+}
+
+/* Form Styling */
+.investment-calculator {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+input[type="number"],
+input[type="date"],
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+button {
+    cursor: pointer;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s;
+}
+
+.primary-button {
+    background-color: #daa520;
+    color: white;
+    width: 100%;
+}
+
+.primary-button:hover {
+    background-color: #b8860b;
+}
+
+.secondary-button {
+    background-color: #f0f0f0;
+    color: #333;
+    margin-top: 5px;
+}
+
+.secondary-button:hover {
+    background-color: #e0e0e0;
+}
+
+.delete-button {
+    background-color: #dc3545;
+    color: white;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.delete-button:hover {
+    background-color: #c82333;
+}
 
 /* Refresh Button */
 .refresh-button {
@@ -39,8 +166,53 @@
     to {transform: rotate(360deg);}
 }
 
+/* Purchases Table */
+.purchases-section {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f8f8f8;
+    font-weight: 600;
+}
+
+.empty-row td {
+    text-align: center;
+    padding: 30px;
+    color: #777;
+}
+
+tfoot tr {
+    background-color: #f9f9f9;
+    font-weight: 600;
+}
+
+tfoot td {
+    border-top: 2px solid #ddd;
+}
+
 /* Cache Status Indicator */
-.last-updated-info {
+.cache-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -64,4 +236,50 @@
 .fresh {
     background-color: #d4edda;
     color: #155724;
+}
+
+/* Profit/Loss Styling */
+.profit {
+    color: #28a745;
+}
+
+.loss {
+    color: #dc3545;
+}
+
+/* Error Message */
+#error-message {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.error-text {
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 800px) {
+    th, td {
+        padding: 8px 10px;
+        font-size: 14px;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+    
+    .price-value {
+        font-size: 20px;
+    }
 }

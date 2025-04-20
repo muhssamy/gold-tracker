@@ -1,15 +1,49 @@
 import json
+import logging
 import os
 import time
 from datetime import datetime, timedelta
+from logging.handlers import RotatingFileHandler
 
 import requests
 from flask import Flask, jsonify, render_template, request, session
 
 import utils
 
+# Create application instance
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key")
+
+# Configure logging
+os.makedirs("logs", exist_ok=True)
+
+# Set up logging
+file_handler = RotatingFileHandler(
+    "logs/gold_tracker.log", maxBytes=10240, backupCount=10
+)
+file_handler.setFormatter(
+    logging.Formatter(
+        "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"
+    )
+)
+file_handler.setLevel(logging.INFO)
+
+# Add console handler for Docker logs
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+)
+
+# Configure app logger
+app.logger.addHandler(file_handler)
+app.logger.addHandler(console_handler)
+app.logger.setLevel(logging.INFO)
+app.logger.info("Gold Tracker startup")
+
+# Set production mode
+app.config["ENV"] = "production"
+app.config["DEBUG"] = False
 
 # Get API key from environment variable
 API_KEY = os.environ.get("GOLD_API_KEY", "")
@@ -42,9 +76,11 @@ def get_usd_to_sar_rate(force_refresh=False):
     )
 
     if cache_valid:
+        app.logger.debug("Using cached exchange rate")
         return price_cache["exchange_rate"]
 
     try:
+        app.logger.info("Fetching fresh exchange rate data")
         # Try to fetch from an exchange rate API
         response = requests.get("https://open.er-api.com/v6/latest/USD")
         if response.status_code == 200:
@@ -58,9 +94,10 @@ def get_usd_to_sar_rate(force_refresh=False):
 
             return rate
     except Exception as e:
-        print(f"Error fetching exchange rate: {e}")
+        app.logger.error(f"Error fetching exchange rate: {e}")
 
     # Fallback to a fixed rate if API fails
+    app.logger.warning("Using fallback exchange rate")
     return 3.75  # Fixed approximate USD to SAR rate
 
 
@@ -83,9 +120,11 @@ def get_gold_price_usd(force_refresh=False):
     )
 
     if cache_valid:
+        app.logger.debug("Using cached gold price")
         return price_cache["gold_price_usd"]
 
     try:
+        app.logger.info("Fetching fresh gold price data")
         # Call GoldAPI to get current gold price in USD
         headers = {"x-access-token": API_KEY, "Content-Type": "application/json"}
         response = requests.get("https://www.goldapi.io/api/XAU/USD", headers=headers)
@@ -96,9 +135,12 @@ def get_gold_price_usd(force_refresh=False):
             # Extract price data
             if "price_gram_24k" in data:
                 price_per_gram_usd = data["price_gram_24k"]
+                app.logger.debug(f"Got price_gram_24k: {price_per_gram_usd}")
             elif "price" in data and data["price"] is not None:
                 price_per_gram_usd = data["price"] / 31.1035
+                app.logger.debug(f"Calculated price per gram: {price_per_gram_usd}")
             else:
+                app.logger.error("No price data found in API response")
                 return None
 
             # Update cache
@@ -108,7 +150,7 @@ def get_gold_price_usd(force_refresh=False):
 
             return price_per_gram_usd
     except Exception as e:
-        print(f"Error fetching gold price: {e}")
+        app.logger.error(f"Error fetching gold price: {e}")
 
     return None
 
@@ -116,6 +158,7 @@ def get_gold_price_usd(force_refresh=False):
 @app.route("/")
 def index():
     """Render the main page"""
+    app.logger.info("Serving index page")
     return render_template("index.html")
 
 
@@ -130,6 +173,7 @@ def get_current_price():
         price_per_gram_usd = get_gold_price_usd(force_refresh)
 
         if price_per_gram_usd is None:
+            app.logger.error("Failed to get gold price data")
             return jsonify(
                 {"success": False, "message": "Failed to get gold price data"}
             )
@@ -140,6 +184,9 @@ def get_current_price():
         # Convert to SAR
         price_per_gram_sar = price_per_gram_usd * usd_to_sar
 
+        app.logger.info(
+            f"Current gold price: {price_per_gram_sar} SAR/g (from {'API' if force_refresh else 'cache'})"
+        )
         return jsonify(
             {
                 "success": True,
@@ -153,6 +200,7 @@ def get_current_price():
             }
         )
     except Exception as e:
+        app.logger.error(f"Error in get_current_price: {str(e)}")
         return jsonify({"success": False, "message": f"Error: {str(e)}"})
 
 
@@ -162,6 +210,7 @@ def get_historical_price():
     try:
         date = request.args.get("date")
         if not date:
+            app.logger.warning("Missing date parameter in historical price request")
             return jsonify({"success": False, "message": "Date parameter is required"})
 
         # Format date as YYYYMMDD for the API
@@ -171,6 +220,7 @@ def get_historical_price():
         # Call GoldAPI to get historical gold price in USD
         headers = {"x-access-token": API_KEY, "Content-Type": "application/json"}
         url = f"https://www.goldapi.io/api/XAU/USD/{formatted_date}"
+        app.logger.info(f"Fetching historical price for date: {date}")
         response = requests.get(url, headers=headers)
 
         if response.status_code == 200:
@@ -184,12 +234,19 @@ def get_historical_price():
                 price_per_gram_usd = data["price_gram_24k"]
                 # Convert to SAR
                 price_per_gram_sar = price_per_gram_usd * usd_to_sar
+                app.logger.debug(
+                    f"Historical price from price_gram_24k: {price_per_gram_sar} SAR/g"
+                )
             # Fallback to calculating from price if available
             elif "price" in data and data["price"] is not None:
                 price_per_gram_usd = data["price"] / 31.1035
                 # Convert to SAR
                 price_per_gram_sar = price_per_gram_usd * usd_to_sar
+                app.logger.debug(
+                    f"Historical price calculated from price: {price_per_gram_sar} SAR/g"
+                )
             else:
+                app.logger.error("No price data found in historical API response")
                 return jsonify(
                     {
                         "success": False,
@@ -208,6 +265,7 @@ def get_historical_price():
                 }
             )
         else:
+            app.logger.error(f"API Error: {response.status_code} - {response.text}")
             return jsonify(
                 {
                     "success": False,
@@ -215,6 +273,7 @@ def get_historical_price():
                 }
             )
     except Exception as e:
+        app.logger.error(f"Error in get_historical_price: {str(e)}")
         return jsonify({"success": False, "message": f"Error: {str(e)}"})
 
 
@@ -231,6 +290,7 @@ def get_purchases():
         price_per_gram_usd = get_gold_price_usd(force_refresh)
 
         if price_per_gram_usd is None:
+            app.logger.error("Failed to get gold price data for purchases")
             return jsonify(
                 {"success": False, "message": "Failed to get gold price data"}
             )
@@ -266,6 +326,9 @@ def get_purchases():
             (total_profit_loss / total_investment) * 100 if total_investment > 0 else 0
         )
 
+        app.logger.info(
+            f"Calculated purchases profit/loss. Total: {total_profit_loss} SAR"
+        )
         return jsonify(
             {
                 "success": True,
@@ -287,6 +350,7 @@ def get_purchases():
             }
         )
     except Exception as e:
+        app.logger.error(f"Error in get_purchases: {str(e)}")
         return jsonify({"success": False, "message": f"Error: {str(e)}"})
 
 
@@ -304,9 +368,13 @@ def add_purchase():
         }
 
         utils.add_purchase(purchase)
+        app.logger.info(
+            f"Added new purchase: {purchase['grams']}g at {purchase['purchase_price']} SAR/g"
+        )
 
         return jsonify({"success": True, "purchase": purchase})
     except Exception as e:
+        app.logger.error(f"Error adding purchase: {str(e)}")
         return jsonify({"success": False, "message": f"Error: {str(e)}"})
 
 
@@ -317,8 +385,10 @@ def delete_purchase(purchase_id):
         success = utils.delete_purchase(purchase_id)
 
         if success:
+            app.logger.info(f"Deleted purchase: {purchase_id}")
             return jsonify({"success": True})
         else:
+            app.logger.warning(f"Purchase not found for deletion: {purchase_id}")
             return jsonify(
                 {
                     "success": False,
@@ -326,8 +396,23 @@ def delete_purchase(purchase_id):
                 }
             )
     except Exception as e:
+        app.logger.error(f"Error deleting purchase: {str(e)}")
         return jsonify({"success": False, "message": f"Error: {str(e)}"})
 
 
+# Health check endpoint for monitoring
+@app.route("/health", methods=["GET"])
+def health_check():
+    """Health check endpoint for monitoring"""
+    return jsonify({"status": "healthy", "timestamp": datetime.now().isoformat()})
+
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    # Get port from environment variable
+    port = int(os.environ.get("PORT", 8080))
+
+    # Log startup
+    app.logger.info(f"Starting Gold Tracker on port {port}")
+
+    # Run the app
+    app.run(host="0.0.0.0", port=port)
