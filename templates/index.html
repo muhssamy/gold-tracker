@@ -24,6 +24,87 @@
         </button>
       </div>
 
+      <div class="import-export-box">
+        <div class="import-export-buttons">
+          <a href="/api/export" class="export-button action-button">
+            <span class="button-icon">↓</span> Export Purchases to CSV
+          </a>
+          <label for="import-file" class="import-button action-button">
+            <span class="button-icon">↑</span> Import from CSV
+            <input
+              type="file"
+              id="import-file"
+              accept=".csv"
+              style="display: none"
+            />
+          </label>
+        </div>
+
+        <div class="sample-download">
+          <a
+            href="{{ url_for('static', filename='samples/sample_import.csv') }}"
+            download
+          >
+            <span class="sample-icon">📄</span> Download Sample CSV Template
+          </a>
+        </div>
+
+        <div id="import-modal" class="modal hidden">
+          <div class="modal-content">
+            <span class="close-button" id="close-import-modal">&times;</span>
+            <h3>Import Gold Purchases</h3>
+            <p>Your CSV file should have the following columns:</p>
+            <ul>
+              <li><strong>purchase_date</strong> - in YYYY-MM-DD format</li>
+              <li><strong>purchase_price</strong> - price per gram in SAR</li>
+              <li><strong>grams</strong> - amount of gold purchased</li>
+              <li>
+                <strong>description</strong> - (optional) description of
+                purchase
+              </li>
+            </ul>
+            <p class="download-sample">
+              <a
+                href="{{ url_for('static', filename='samples/sample_import.csv') }}"
+                download
+              >
+                Download sample CSV template
+              </a>
+            </p>
+            <div class="upload-area">
+              <div id="file-name">No file selected</div>
+              <div class="progress-container hidden">
+                <div class="progress-bar"></div>
+              </div>
+            </div>
+            <div class="modal-buttons">
+              <button type="button" id="cancel-import" class="secondary-button">
+                Cancel
+              </button>
+              <button
+                type="button"
+                id="confirm-import"
+                class="primary-button"
+                disabled
+              >
+                Import Data
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="import-results" class="modal hidden">
+          <div class="modal-content results-content">
+            <span class="close-button" id="close-import-results">&times;</span>
+            <h3>Import Results</h3>
+            <p id="import-summary"></p>
+            <button type="button" id="close-results" class="primary-button">
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div class="investment-calculator">
         <h2>Add New Gold Purchase</h2>
         <form id="gold-purchase-form">
