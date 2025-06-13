@@ -34,7 +34,7 @@ Keep track of your gold investments in Saudi Arabia with these powerful features
 docker pull ghcr.io/muhssamy/gold-tracker:latest
 
 # Run with your GoldAPI key
-docker run -d -p 8080:8080 \
+docker run -d -p 8855:8855 \
   -e GOLD_API_KEY=your_api_key_here \
   -v gold_data:/app/data \
   --name gold-tracker \

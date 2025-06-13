@@ -3,7 +3,7 @@ services:
     image: ghcr.io/YOUR-USERNAME/gold-tracker:latest
     container_name: gold-tracker
     ports:
-      - "8080:8080"
+      - "8855:8855"
     environment:
       - GOLD_API_KEY=${GOLD_API_KEY}
       - SECRET_KEY=${SECRET_KEY:-random_secure_string}

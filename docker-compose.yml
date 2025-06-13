@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8855:8855"
     environment:
       - GOLD_API_KEY=${GOLD_API_KEY}
       - SECRET_KEY=${SECRET_KEY:-change_this_to_a_random_secure_string}
@@ -14,7 +14,7 @@ services:
     restart: unless-stopped
     # Health check to ensure the application is running
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8855/"]
       interval: 1m
       timeout: 10s
       retries: 3

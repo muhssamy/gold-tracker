@@ -75,4 +75,4 @@ jobs:
           echo ""
           echo "To pull and run this image:"
           echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
-          echo "docker run -d -p 8080:8080 -e GOLD_API_KEY=your_api_key ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          echo "docker run -d -p 8855:8855 -e GOLD_API_KEY=your_api_key ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"

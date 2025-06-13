@@ -21,10 +21,10 @@ COPY . .
 RUN mkdir -p data && chmod 777 data
 
 # Expose port (PORT can be overridden by environment variable)
-EXPOSE 8080
+EXPOSE 8855
 
 # Set environment variables with defaults
-ENV PORT=8080 \
+ENV PORT=8855 \
     GOLD_API_KEY="" \
     SECRET_KEY="dev-only-key-replace-in-production" \
     WORKERS=4

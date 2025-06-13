@@ -64,7 +64,7 @@ app = create_app()
 
 if __name__ == "__main__":
     # Get port from environment variable
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get("PORT", 8855))
 
     # Log startup
     app.logger.info(f"Starting Gold Tracker on port {port}")
